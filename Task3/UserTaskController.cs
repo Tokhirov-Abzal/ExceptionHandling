@@ -27,19 +27,34 @@ namespace Task3
 
         private string GetMessageForModel(int userId, string description)
         {
-            var task = new UserTask(description);
+
             try
             {
+                var task = CreateTask(description);
                 int result = _taskService.AddTaskForUser(userId, task);
             }
-            catch (Exception ex) when (ex is UserNotFoundException || ex is InvalidUserException || ex is TaskAlreadyExistsException)
+            catch (Exception ex)
             {
-                Console.WriteLine(ex.Message);
+                HandleException(ex);
                 return ex.Message;
             }
 
 
             return null;
+        }
+
+        private UserTask CreateTask(string description)
+        {
+            return new UserTask(description);
+        }
+
+        private void HandleException(Exception ex)
+        {
+            if (ex is UserNotFoundException | ex is InvalidUserException | ex is TaskAlreadyExistsException)
+            {
+                Console.WriteLine(ex.Message);
+            }
+
         }
     }
 }
